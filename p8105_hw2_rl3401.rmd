@@ -1,0 +1,86 @@
+---
+title: "p8105_hw2_rl3401.Rmd"
+author: "Ruoxi Li"
+date: "2023-09-26"
+output: github_document
+---
+```{r,echo=FALSE}
+Sys.setenv(LANGUAGE = "en")
+```
+
+## Problem 1
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+pols_df = read_csv("data/pols-month.csv") |>
+  janitor::clean_names() |>
+  separate(mon, into = c("year", "month", "day"), sep = "-") |>
+  mutate(month = case_when(
+    month == "01" ~ "jan",
+    month == "02" ~ "feb",
+    month == "03" ~ "mar",
+    month == "04" ~ "apr",
+    month == "05" ~ "may",
+    month == "06" ~ "jun",
+    month == "07" ~ "jul",
+    month == "08" ~ "aug",
+    month == "09" ~ "sep",
+    month == "10" ~ "oct",
+    month == "11" ~ "nov",
+    month == "12" ~ "dec",
+  )) |>
+  mutate(president = case_match(
+    prez_dem,
+    0 ~ "gop",
+    1 ~ "dem"
+  )) |>
+  select(-prez_dem, -prez_gop) |>
+  select(-day)
+```
+
+```{r}
+date_format <- "%m/%d/%y"
+snp_df = read_csv("data/snp.csv", col_types = cols(date = col_date(format = date_format))) |>
+  janitor::clean_names() |>
+  separate(date, into = c("year", "month", "day"), sep = "-") |>
+   mutate(month = case_when(
+    month == "01" ~ "jan",
+    month == "02" ~ "feb",
+    month == "03" ~ "mar",
+    month == "04" ~ "apr",
+    month == "05" ~ "may",
+    month == "06" ~ "jun",
+    month == "07" ~ "jul",
+    month == "08" ~ "aug",
+    month == "09" ~ "sep",
+    month == "10" ~ "oct",
+    month == "11" ~ "nov",
+    month == "12" ~ "dec",
+  )) |>
+    select(-day) |>
+  arrange(year,month) |>
+  relocate(year,month)  
+```
+
+```{r}
+unemployment_df = read_csv("data/unemployment.csv") |>
+   janitor::clean_names() |>
+   mutate(year = as.character(year))|>
+   pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "unemployment_rate",
+  ) 
+  
+```
+
+```{r}
+final_df = 
+  left_join(pols_df, snp_df, by = c("year","month"))|>
+  left_join(unemployment_df, by = c("year","month") )
+```
+
+Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
