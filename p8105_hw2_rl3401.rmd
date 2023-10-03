@@ -193,3 +193,11 @@ inner_ad_df = inner_join(baseline_df,amyloid_df,by = "id")
 ```
 
 describe the resulting dataset
+
+export the result as a CSV to the data directory
+
+```{r}
+write_csv(inner_ad_df, "data/inner_ad_df.csv")
+```
+
+
