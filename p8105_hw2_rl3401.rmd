@@ -93,3 +93,41 @@ final_df =
 ```
 
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+
+## problem 2
+
+Read and clean the Mr. Trash Wheel sheet
+
+```{r}
+mr_trash_df = 
+read_excel("data/TWC.xlsx", sheet = "Mr. Trash Wheel", skip = 1, range = cell_cols("A:N")) |>
+  janitor::clean_names()  |>
+  drop_na(dumpster) |>
+  mutate(
+    year=as.integer(year),
+    homes_powered = weight_tons*500/30,
+    wheel_type = "mr")
+```
+
+import, clean, and organize the data for Professor Trash Wheel and Gwynnda
+
+
+```{r}
+pro_trash_df = 
+  read_excel("data/TWC.xlsx", sheet = "Professor Trash Wheel", skip = 1, range = cell_cols("A:M")) |>
+  janitor::clean_names()  |>
+  drop_na(dumpster) |>
+  mutate(
+    year=as.integer(year),
+    homes_powered = weight_tons*500/30,
+    wheel_type = "prof")
+
+gwy_trash_df = 
+  read_excel("data/TWC.xlsx", sheet = "Gwynnda Trash Wheel", skip = 1, range = cell_cols("A:K")) |>
+  janitor::clean_names()  |>
+  drop_na(dumpster) |>
+  mutate(
+    year=as.integer(year),
+    homes_powered = weight_tons*500/30,
+    wheel_type = "gwy")
+```
