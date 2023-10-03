@@ -131,3 +131,13 @@ gwy_trash_df =
     homes_powered = weight_tons*500/30,
     wheel_type = "gwy")
 ```
+
+Combine datasets to produce a single tidy dataset
+
+```{r}
+trash_df = 
+  bind_rows(mr_trash_df, pro_trash_df, gwy_trash_df) |>
+  relocate(wheel_type)
+```
+
+Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
