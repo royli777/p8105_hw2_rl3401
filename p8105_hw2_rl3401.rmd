@@ -12,3 +12,35 @@ Sys.setenv(LANGUAGE = "en")
 library(tidyverse)
 library(readxl)
 ```
+
+
+## Problem 1
+
+```{r}
+pols_df = read_csv("data/pols-month.csv") |>
+  janitor::clean_names() |>
+  separate(mon, into = c("year", "month", "day"), sep = "-") |>
+  mutate(month = case_when(
+    month == "01" ~ "jan",
+    month == "02" ~ "feb",
+    month == "03" ~ "mar",
+    month == "04" ~ "apr",
+    month == "05" ~ "may",
+    month == "06" ~ "jun",
+    month == "07" ~ "jul",
+    month == "08" ~ "aug",
+    month == "09" ~ "sep",
+    month == "10" ~ "oct",
+    month == "11" ~ "nov",
+    month == "12" ~ "dec",
+  )) |>
+  mutate(president = case_match(
+    prez_dem,
+    0 ~ "gop",
+    1 ~ "dem"
+  )) |>
+  select(-prez_dem, -prez_gop) |>
+  select(-day)
+```
+
+clean the data in pols-month.csv
