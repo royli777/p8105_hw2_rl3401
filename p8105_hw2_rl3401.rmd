@@ -16,6 +16,8 @@ library(readxl)
 
 ## Problem 1
 
+clean the data in pols-month.csv
+
 ```{r}
 pols_df = read_csv("data/pols-month.csv") |>
   janitor::clean_names() |>
@@ -43,4 +45,28 @@ pols_df = read_csv("data/pols-month.csv") |>
   select(-day)
 ```
 
-clean the data in pols-month.csv
+clean the data in snp.csv 
+
+```{r}
+date_format <- "%m/%d/%y"
+snp_df = read_csv("data/snp.csv", col_types = cols(date = col_date(format = date_format))) |>
+  janitor::clean_names() |>
+  separate(date, into = c("year", "month", "day"), sep = "-") |>
+   mutate(month = case_when(
+    month == "01" ~ "jan",
+    month == "02" ~ "feb",
+    month == "03" ~ "mar",
+    month == "04" ~ "apr",
+    month == "05" ~ "may",
+    month == "06" ~ "jun",
+    month == "07" ~ "jul",
+    month == "08" ~ "aug",
+    month == "09" ~ "sep",
+    month == "10" ~ "oct",
+    month == "11" ~ "nov",
+    month == "12" ~ "dec",
+  )) |>
+    select(-day) |>
+  arrange(year,month) |>
+  relocate(year,month)  
+```
