@@ -141,3 +141,38 @@ trash_df =
 ```
 
 Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
+
+## problem 3
+
+Import, clean, and tidy the dataset of baseline demographics
+
+```{r}
+baseline_df = 
+read_csv("data/MCI_baseline.csv", skip = 1,show_col_types = FALSE) |>
+  janitor::clean_names()  |>
+  filter(age_at_onset == "." | age_at_onset > current_age)|>
+   mutate(
+      sex = case_match(
+      sex,
+      1 ~ "male",
+      0 ~ "female"),
+      apoe4  = case_match(
+      apoe4,
+      1 ~ "carrier",
+      0 ~ "non_carrier"),
+      current_age = as.numeric(current_age)
+  ) 
+```
+
+Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
+
+import, clean, and tidy the dataset of longitudinally observed biomarker values
+
+```{r}
+amyloid_df = 
+read_csv("data/mci_amyloid.csv", skip = 1,show_col_types = FALSE) |>
+  janitor::clean_names()  |>
+  rename("id" = "study_id")
+```
+
+comment on the steps on the import process and the features of the dataset.
