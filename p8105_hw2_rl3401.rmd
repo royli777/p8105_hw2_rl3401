@@ -176,3 +176,20 @@ read_csv("data/mci_amyloid.csv", skip = 1,show_col_types = FALSE) |>
 ```
 
 comment on the steps on the import process and the features of the dataset.
+
+Check whether some participants appear in only the baseline or amyloid dataset
+
+```{r}
+full_ad_df = full_join(baseline_df,amyloid_df,by = "id")
+```
+
+After checking the dataframe, I found that some participants appear in only the baseline dataset, while some other participants appear in only the amyloid dataset.
+Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings. 
+
+Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained
+
+```{r}
+inner_ad_df = inner_join(baseline_df,amyloid_df,by = "id")
+```
+
+describe the resulting dataset
