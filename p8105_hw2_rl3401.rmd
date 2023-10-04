@@ -195,7 +195,10 @@ read_csv("data/MCI_baseline.csv", skip = 1,show_col_types = FALSE) |>
 amyloid_df = 
 read_csv("data/mci_amyloid.csv", skip = 1,show_col_types = FALSE) |>
   janitor::clean_names()  |>
-  rename("id" = "study_id")
+  rename("id" = "study_id") |>
+  pivot_longer( cols = baseline:time_8,
+               names_to = "time",
+               values_to = "amyloid")
 ```
 
 *I read the data from a csv file, omitted the row with comment, and clean the columne names. I renamed the study_id column to id column to further combine the datasets.*
