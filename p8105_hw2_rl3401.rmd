@@ -16,7 +16,7 @@ library(readxl)
 
 ## Problem 1
 
-clean the data in pols-month.csv
+Clean the data in pols-month.csv
 
 ```{r}
 pols_df = read_csv("data/pols-month.csv") |>
@@ -45,7 +45,7 @@ pols_df = read_csv("data/pols-month.csv") |>
   select(-day)
 ```
 
-clean the data in snp.csv 
+Clean the data in snp.csv 
 
 ```{r}
 date_format <- "%m/%d/%y"
@@ -71,7 +71,7 @@ snp_df = read_csv("data/snp.csv", col_types = cols(date = col_date(format = date
   relocate(year,month)  
 ```
 
-tidy the unemployment data 
+Tidy the unemployment data 
 
 ```{r}
 unemployment_df = read_csv("data/unemployment.csv") |>
@@ -92,7 +92,13 @@ final_df =
   left_join(unemployment_df, by = c("year","month") )
 ```
 
-Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+*The pols_df has `r nrow(pols_df)` rows and `r ncol(pols_df)` columns.*
+
+*The snp_df has `r nrow(snp_df)` rows and `r ncol(snp_df)` columns.*
+
+*The unemployment_df has `r nrow(unemployment_df)` rows and `r ncol(unemployment_df)` columns.*
+
+*The resulting dataset has has `r nrow(final_df)` rows and `r ncol(final_df)` columns with variables `r names(final_df)`.*
 
 ## problem 2
 
@@ -109,11 +115,11 @@ read_excel("data/TWC.xlsx", sheet = "Mr. Trash Wheel", skip = 1, range = cell_co
     wheel_type = "mr")
 ```
 
-import, clean, and organize the data for Professor Trash Wheel and Gwynnda
+Import, clean, and organize the data for Professor Trash Wheel and Gwynnda
 
 
 ```{r}
-pro_trash_df = 
+prof_trash_df = 
   read_excel("data/TWC.xlsx", sheet = "Professor Trash Wheel", skip = 1, range = cell_cols("A:M")) |>
   janitor::clean_names()  |>
   drop_na(dumpster) |>
@@ -136,11 +142,26 @@ Combine datasets to produce a single tidy dataset
 
 ```{r}
 trash_df = 
-  bind_rows(mr_trash_df, pro_trash_df, gwy_trash_df) |>
+  bind_rows(mr_trash_df, prof_trash_df, gwy_trash_df) |>
   relocate(wheel_type)
 ```
 
-Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
+*The Mr. Trash Wheel dataframe has `r nrow(mr_trash_df)` rows and `r ncol(mr_trash_df)` columns.*
+
+*The Professor dataframe Trash Wheel has `r nrow(prof_trash_df)` rows and `r ncol(prof_trash_df)` columns.*
+
+*The Gwynnda dataframe has `r nrow(gwy_trash_df)` rows and `r ncol(gwy_trash_df)` columns.*
+
+*The combined dataframe has `r nrow(trash_df)` rows and `r ncol(trash_df)` columns.*
+
+*The example of key variables in the combined dataframe is*
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+head(trash_df,n=1)
+```
+*The total weight of trash collected by Professor trash wheel is `r sum(pull(prof_trash_df,weight_tons))` tons.*
+
+*The total number of cigarette butts collected by Gwynnda in July of 2021 is `r gwy_trash_df|> filter(year == 2021, month == "July") |> pull(cigarette_butts) |> sum() `.*
 
 ## problem 3
 
@@ -164,9 +185,11 @@ read_csv("data/MCI_baseline.csv", skip = 1,show_col_types = FALSE) |>
   ) 
 ```
 
-Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
+*There are `r nrow(baseline_df)` participants recruited, `r nrow(baseline_df)-nrow(filter(baseline_df,age_at_onset == "."))` develop MCI.*
 
-import, clean, and tidy the dataset of longitudinally observed biomarker values
+*The average baseline age is `r pull(baseline_df,current_age) |> mean()`.*
+
+*The proportion of women in the study are APOE4 carriers is `r  nrow(filter(baseline_df,sex == "female", apoe4 == "carrier"))/nrow(filter(baseline_df,sex == "female"))`.*
 
 ```{r}
 amyloid_df = 
@@ -175,7 +198,7 @@ read_csv("data/mci_amyloid.csv", skip = 1,show_col_types = FALSE) |>
   rename("id" = "study_id")
 ```
 
-comment on the steps on the import process and the features of the dataset.
+*I read the data from a csv file, omitted the row with comment, and clean the columne names. I renamed the study_id column to id column to further combine the datasets.*
 
 Check whether some participants appear in only the baseline or amyloid dataset
 
@@ -183,8 +206,7 @@ Check whether some participants appear in only the baseline or amyloid dataset
 full_ad_df = full_join(baseline_df,amyloid_df,by = "id")
 ```
 
-After checking the dataframe, I found that some participants appear in only the baseline dataset, while some other participants appear in only the amyloid dataset.
-Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings. 
+*After checking the dataframe, I found that some participants appear in only the baseline dataset, while some other participants appear in only the amyloid dataset.*
 
 Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained
 
@@ -192,9 +214,12 @@ Combine the demographic and biomarker datasets so that only participants who app
 inner_ad_df = inner_join(baseline_df,amyloid_df,by = "id")
 ```
 
-describe the resulting dataset
+*Only `r nrow(inner_ad_df)` participants appear in both the baseline dataset and the amyloid dataset, meaning that there are `r nrow(full_ad_df)-nrow(inner_ad_df)` participants whose data only appear in one dataset.*
+ 
+*The resulting dataset of participants who appear in both baseline and amyloid datasets have `r nrow(inner_ad_df)` rows and `r ncol(inner_ad_df)` columns, the variables in the dataset are: `r names(inner_ad_df)`.*
 
-export the result as a CSV to the data directory
+
+Export the result as a CSV to the data directory
 
 ```{r}
 write_csv(inner_ad_df, "data/inner_ad_df.csv")
